@@ -1,0 +1,30 @@
+{
+  "name": "template-engine-employee-summary",
+  "version": "1.0.0",
+  "description": "Node CLI that takes in information about employees and generates an HTML webpage that displays summaries for each person. Since testing is a key piece in making code maintainable,it is ensured that all unit tests passed.",
+  "main": "app.js",
+  "directories": {
+    "lib": "lib",
+    "test": "test"
+  },
+  "dependencies": {
+    "inquirer": "^7.0.4"
+  },
+  "devDependencies": {
+    "jest": "^25.1.0"
+  },
+  "scripts": {
+    "test": "jest --verbose test/*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DariaNau/template-engine-employee-summary.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DariaNau/template-engine-employee-summary/issues"
+  },
+  "homepage": "https://github.com/DariaNau/template-engine-employee-summary#readme"
+}
