@@ -80,9 +80,9 @@ const questions = {
 
 init();
 
-async function init() {
-  try {
-    const manager = await inquirer.prompt(questions.manager);
+function init() {
+  
+  inquirer.prompt(questions.manager).then((manager) => {
     // const managerData = new Manager (manager.name, manager.id, manager.email, manager.officeNumber);
     // console.log(manager);
     fs.readFile("./templates/manager.html", "utf8", async (err, data) => {
@@ -104,11 +104,7 @@ async function init() {
         console.log("Ok, bye!");
       }
     });
-
-    
-  } catch (error) {
-    console.log(error);
-  }
+  }).catch (error => console.log(error))
 }
 
 async function addEmployee() {
