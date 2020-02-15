@@ -1,7 +1,10 @@
 const Employee = require("./lib");
-const Manager = require("./lib/Manager");
 const inquirer = require("inquirer");
 const fs = require("fs");
+
+// process.on("warning", function(w) {
+//   console.log(" => interactive warning => ", w.stack || w);
+// });
 
 const empID = [];
 let employeesHTML = "";
@@ -86,79 +89,86 @@ function init() {
     .then(manager => {
       // const managerData = new Manager (manager.name, manager.id, manager.email, manager.officeNumber);
       // console.log(manager);
-      fs.readFile("./templates/manager.html", "utf8", (err, data) => {
-        // console.log(data)
-        if (err) throw err;
-        const replaced = data
-          .replace("{{name}}", manager.name)
-          .replace("{{id}}", manager.id)
-          .replace("{{email}}", manager.email)
-          .replace("{{officeNumber}}", manager.officeNumber);
-        employeesHTML += replaced;
-        // console.log(replaced);
-        inquirer.prompt(questions.new).then((newEmployee) =>{
-        if (newEmployee.confirm == "yes"){
+      const data1 = fs.readFileSync("./templates/manager.html", "utf8");
+      // console.log(data1)
+      // if (err) throw err;
+      const replaced = data1
+        .replace("{{name}}", manager.name)
+        .replace("{{id}}", manager.id)
+        .replace("{{email}}", manager.email)
+        .replace("{{officeNumber}}", manager.officeNumber);
+      employeesHTML += replaced;
+      // console.log(replaced);
+      inquirer.prompt(questions.new).then(newEmployee => {
+        if (newEmployee.confirm == "yes") {
           addEmployee();
         } else {
           renderHtml(employeesHTML);
           console.log("Ok, bye!");
         }
-      })
+      });
     })
-  })
     .catch(error => console.log(error));
+}
+
+function addEngineer() {
+  inquirer.prompt(questions.engineer).then(engineer => {
+    // console.log("Answers:", engineer);
+    const data2 = fs.readFileSync("./templates/engineer.html", "utf8")
+      // console.log(data2)
+      // if (err) throw err;
+      const replaced = data2
+        .replace("{{name}}", engineer.name)
+        .replace("{{id}}", engineer.id)
+        .replace("{{email}}", engineer.email)
+        .replace("{{github}}", engineer.github);
+      employeesHTML += replaced;
+      // console.log(replaced);
+      // renderHtml(employeesHTML);
+      addNew();
+  });
+}
+
+function addIntern() {
+  inquirer.prompt(questions.intern).then(intern => {
+    // console.log("Answers:", intern);
+    const data3 = fs.readFileSync("./templates/intern.html", "utf8")
+      // console.log(data3)
+      // if (err) throw err;
+      const replaced = data3
+        .replace("{{name}}", intern.name)
+        .replace("{{id}}", intern.id)
+        .replace("{{email}}", intern.email)
+        .replace("{{school}}", intern.school);
+      employeesHTML += replaced;
+      // console.log(replaced);
+      // renderHtml(employeesHTML);
+      addNew();
+  });
 }
 
 function addEmployee() {
   inquirer.prompt(questions.employeeType).then(employeeType => {
     if (employeeType.add === "engineer") {
-      inquirer.prompt(questions.engineer).then(engineer => {
-        // console.log("Answers:", engineer);
-        fs.readFile("./templates/engineer.html", "utf8", (err, data) => {
-          // console.log(data)
-          if (err) throw err;
-          const replaced = data
-            .replace("{{name}}", engineer.name)
-            .replace("{{id}}", engineer.id)
-            .replace("{{email}}", engineer.email)
-            .replace("{{github}}", engineer.github);
-          employeesHTML += replaced;
-          // console.log(replaced);
-          renderHtml(employeesHTML);
-          addNew();
-        });
-      });
+      addEngineer();
     } else if ((employeeType.add = "intern")) {
-      inquirer.prompt(questions.intern).then(intern => {
-        // console.log("Answers:", intern);
-        fs.readFile("./templates/intern.html", "utf8", (err, data) => {
-          // console.log(data)
-          if (err) throw err;
-          const replaced = data
-            .replace("{{name}}", intern.name)
-            .replace("{{id}}", intern.id)
-            .replace("{{email}}", intern.email)
-            .replace("{{school}}", intern.school);
-          employeesHTML += replaced;
-          // console.log(replaced);
-          renderHtml(employeesHTML);
-          addNew();
-        });
-      });
+      addIntern();
     } else if ((employeeType.add = "none")) {
+      renderHtml(employeesHTML);
       console.log("Ok, bye!");
     }
   });
 }
 
 function addNew() {
-  inquirer.prompt(questions.another).then((runAgain) => {
-  if (runAgain.addNew == "yes") {
-    addEmployee();
-  } else {
-    console.log("Ok, bye!");
-  }
-})
+  inquirer.prompt(questions.another).then(runAgain => {
+    if (runAgain.addNew == "yes") {
+      addEmployee();
+    } else {
+      renderHtml(employeesHTML);
+      console.log("Ok, bye!");
+    }
+  });
 }
 
 function renderHtml(replaced) {
