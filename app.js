@@ -81,80 +81,84 @@ const questions = {
 init();
 
 function init() {
-  
-  inquirer.prompt(questions.manager).then((manager) => {
-    // const managerData = new Manager (manager.name, manager.id, manager.email, manager.officeNumber);
-    // console.log(manager);
-    fs.readFile("./templates/manager.html", "utf8", async (err, data) => {
-      // console.log(data)
-      if (err) throw err;
-      const replaced = data
-        .replace("{{name}}", manager.name)
-        .replace("{{id}}", manager.id)
-        .replace("{{email}}", manager.email)
-        .replace("{{officeNumber}}", manager.officeNumber);
-      employeesHTML += replaced;
-      // console.log(replaced);
-      renderHtml(employeesHTML)
-      const newEmployee = await inquirer.prompt(questions.new);
-      if (newEmployee.confirm == "yes") {
-        addEmployee();
-      } else {
-        renderHtml(employeesHTML);
-        console.log("Ok, bye!");
-      }
-    });
-  }).catch (error => console.log(error))
+  inquirer
+    .prompt(questions.manager)
+    .then(manager => {
+      // const managerData = new Manager (manager.name, manager.id, manager.email, manager.officeNumber);
+      // console.log(manager);
+      fs.readFile("./templates/manager.html", "utf8", (err, data) => {
+        // console.log(data)
+        if (err) throw err;
+        const replaced = data
+          .replace("{{name}}", manager.name)
+          .replace("{{id}}", manager.id)
+          .replace("{{email}}", manager.email)
+          .replace("{{officeNumber}}", manager.officeNumber);
+        employeesHTML += replaced;
+        // console.log(replaced);
+        inquirer.prompt(questions.new).then((newEmployee) =>{
+        if (newEmployee.confirm == "yes"){
+          addEmployee();
+        } else {
+          renderHtml(employeesHTML);
+          console.log("Ok, bye!");
+        }
+      })
+    })
+  })
+    .catch(error => console.log(error));
 }
 
-async function addEmployee() {
-  const employeeType = await inquirer.prompt(questions.employeeType);
-  if (employeeType.add === "engineer") {
-    const engineer = await inquirer.prompt(questions.engineer);
-    // console.log("Answers:", engineer);
-    fs.readFile("./templates/engineer.html", "utf8", async (err, data) => {
-      // console.log(data)
-      if (err) throw err;
-      const replaced = data
-        .replace("{{name}}", engineer.name)
-        .replace("{{id}}", engineer.id)
-        .replace("{{email}}", engineer.email)
-        .replace("{{github}}", engineer.github);
-      employeesHTML += replaced;
-      // console.log(replaced);
-      renderHtml(employeesHTML)
-/////////////////////////////////////////////////////////////////////////////////////maybe make runAgain a separate function for concision!???
-    const runAgain = await inquirer.prompt(questions.another);
-    if (runAgain.addNew == "yes") {
-      addEmployee();
-    } else {
+function addEmployee() {
+  inquirer.prompt(questions.employeeType).then(employeeType => {
+    if (employeeType.add === "engineer") {
+      inquirer.prompt(questions.engineer).then(engineer => {
+        // console.log("Answers:", engineer);
+        fs.readFile("./templates/engineer.html", "utf8", (err, data) => {
+          // console.log(data)
+          if (err) throw err;
+          const replaced = data
+            .replace("{{name}}", engineer.name)
+            .replace("{{id}}", engineer.id)
+            .replace("{{email}}", engineer.email)
+            .replace("{{github}}", engineer.github);
+          employeesHTML += replaced;
+          // console.log(replaced);
+          renderHtml(employeesHTML);
+          addNew();
+        });
+      });
+    } else if ((employeeType.add = "intern")) {
+      inquirer.prompt(questions.intern).then(intern => {
+        // console.log("Answers:", intern);
+        fs.readFile("./templates/intern.html", "utf8", (err, data) => {
+          // console.log(data)
+          if (err) throw err;
+          const replaced = data
+            .replace("{{name}}", intern.name)
+            .replace("{{id}}", intern.id)
+            .replace("{{email}}", intern.email)
+            .replace("{{school}}", intern.school);
+          employeesHTML += replaced;
+          // console.log(replaced);
+          renderHtml(employeesHTML);
+          addNew();
+        });
+      });
+    } else if ((employeeType.add = "none")) {
       console.log("Ok, bye!");
     }
-  })
-  } else if ((employeeType.add = "intern")) {
-    const intern = await inquirer.prompt(questions.intern);
-    // console.log("Answers:", intern);
-    fs.readFile("./templates/intern.html", "utf8", async (err, data) => {
-      // console.log(data)
-      if (err) throw err;
-      const replaced = data
-        .replace("{{name}}", intern.name)
-        .replace("{{id}}", intern.id)
-        .replace("{{email}}", intern.email)
-        .replace("{{school}}", intern.school);
-      employeesHTML += replaced;
-      // console.log(replaced);
-      renderHtml(employeesHTML)
-    const runAgain = await inquirer.prompt(questions.another);
-    if (runAgain.addNew == "yes") {
-      addEmployee();
-    } else {
-      console.log("Ok, bye!");
-    }
-  })
-  } else if ((employeeType.add = "none")) {
+  });
+}
+
+function addNew() {
+  inquirer.prompt(questions.another).then((runAgain) => {
+  if (runAgain.addNew == "yes") {
+    addEmployee();
+  } else {
     console.log("Ok, bye!");
   }
+})
 }
 
 function renderHtml(replaced) {
@@ -166,7 +170,7 @@ function renderHtml(replaced) {
     //fs.writeFIle
     fs.writeFile("./output/main.html", mainHtml, function(err) {
       if (err) throw err;
-      console.log("Saved!");
+      // console.log("Saved!");
     });
   });
 }
