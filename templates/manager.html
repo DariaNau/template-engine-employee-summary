@@ -1,6 +1,12 @@
-<div class='manager'>
-    <h1>Name: {{name}}</h1>
-    <div>ID: {{id}}</div>
-    <div>Email: {{email}}</div>
-    <div>Office: {{officeNumber}}</div>
-</div>
+<div class="card border-info mb-3 text-center" style="max-width: 18rem;">
+    <div class="card-header bg-transparent border-info">{{name}}</div>
+    <div class="card-body text-info">
+      <h5 class="card-title"><i class="far fa-check-circle fa-1x"></i>Manager</h5>
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item">ID: {{id}} </li>
+        <li class="list-group-item">Email: <a href="mailto:">{{email}}</a></li>
+        <li class="list-group-item">Office# {{officeNumber}}</li>
+      </ul>
+    </div>
+    <div class="card-footer bg-transparent border-info"></div>
+  </div>

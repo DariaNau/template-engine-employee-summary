@@ -124,7 +124,7 @@ function addEmployee() {
             .replace("{{github}}", engineer.github);
           employeesHTML += replaced;
           // console.log(replaced);
-          renderHtml(employeesHTML);
+          // renderHtml(employeesHTML);
           addNew();
         });
       });
@@ -141,21 +141,22 @@ function addEmployee() {
             .replace("{{school}}", intern.school);
           employeesHTML += replaced;
           // console.log(replaced);
-          renderHtml(employeesHTML);
+          // renderHtml(employeesHTML);
           addNew();
         });
       });
     } else if ((employeeType.add = "none")) {
+      renderHtml(employeesHTML);
       console.log("Ok, bye!");
     }
   });
 }
-
 function addNew() {
   inquirer.prompt(questions.another).then((runAgain) => {
   if (runAgain.addNew == "yes") {
     addEmployee();
   } else {
+    renderHtml(employeesHTML);
     console.log("Ok, bye!");
   }
 })
