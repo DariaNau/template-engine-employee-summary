@@ -1,13 +1,12 @@
 const Employee = require("./lib");
-const Manager = require("./lib/Manager");
 const inquirer = require("inquirer");
 const fs = require("fs");
-
-const empID = [];
 let employeesHTML = "";
 
-const empQ = [
-  {
+// create validation for numbers and email!
+// const empID = [];
+
+const empQ = [{
     name: "name",
     type: "input",
     message: "what is your name?"
@@ -36,30 +35,24 @@ const questions = {
       message: "Please enter office number"
     }
   ],
-  new: [
-    {
-      name: "confirm",
-      message: "Would you like to add an employee to your team?",
-      type: "list",
-      choices: ["yes", "no"]
-    }
-  ],
-  another: [
-    {
-      name: "addNew",
-      message: "Add another employee?",
-      type: "list",
-      choices: ["yes", "no"]
-    }
-  ],
-  employeeType: [
-    {
-      name: "add",
-      message: "What type of employee would you like to add?",
-      type: "list",
-      choices: ["engineer", "intern", "none"]
-    }
-  ],
+  new: [{
+    name: "confirm",
+    message: "Would you like to add an employee to your team?",
+    type: "list",
+    choices: ["yes", "no"]
+  }],
+  another: [{
+    name: "addNew",
+    message: "Add another employee?",
+    type: "list",
+    choices: ["yes", "no"]
+  }],
+  employeeType: [{
+    name: "add",
+    message: "What type of employee would you like to add?",
+    type: "list",
+    choices: ["engineer", "intern", "none"]
+  }],
   intern: [
     ...empQ,
     {
@@ -96,16 +89,16 @@ function init() {
           .replace("{{officeNumber}}", manager.officeNumber);
         employeesHTML += replaced;
         // console.log(replaced);
-        inquirer.prompt(questions.new).then((newEmployee) =>{
-        if (newEmployee.confirm == "yes"){
-          addEmployee();
-        } else {
-          renderHtml(employeesHTML);
-          console.log("Ok, bye!");
-        }
-      })
+        inquirer.prompt(questions.new).then(newEmployee => {
+          if (newEmployee.confirm == "yes") {
+            addEmployee();
+          } else {
+            renderHtml(employeesHTML);
+            console.log("Ok, bye!");
+          }
+        });
+      });
     })
-  })
     .catch(error => console.log(error));
 }
 
@@ -113,9 +106,7 @@ function addEmployee() {
   inquirer.prompt(questions.employeeType).then(employeeType => {
     if (employeeType.add === "engineer") {
       inquirer.prompt(questions.engineer).then(engineer => {
-        // console.log("Answers:", engineer);
         fs.readFile("./templates/engineer.html", "utf8", (err, data) => {
-          // console.log(data)
           if (err) throw err;
           const replaced = data
             .replace("{{name}}", engineer.name)
@@ -123,16 +114,12 @@ function addEmployee() {
             .replace("{{email}}", engineer.email)
             .replace("{{github}}", engineer.github);
           employeesHTML += replaced;
-          // console.log(replaced);
-          // renderHtml(employeesHTML);
           addNew();
         });
       });
     } else if ((employeeType.add = "intern")) {
       inquirer.prompt(questions.intern).then(intern => {
-        // console.log("Answers:", intern);
         fs.readFile("./templates/intern.html", "utf8", (err, data) => {
-          // console.log(data)
           if (err) throw err;
           const replaced = data
             .replace("{{name}}", intern.name)
@@ -140,38 +127,33 @@ function addEmployee() {
             .replace("{{email}}", intern.email)
             .replace("{{school}}", intern.school);
           employeesHTML += replaced;
-          // console.log(replaced);
-          // renderHtml(employeesHTML);
           addNew();
         });
       });
     } else if ((employeeType.add = "none")) {
-      renderHtml(employeesHTML);
+      // renderHtml(employeesHTML);
       console.log("Ok, bye!");
     }
   });
 }
+
 function addNew() {
-  inquirer.prompt(questions.another).then((runAgain) => {
-  if (runAgain.addNew == "yes") {
-    addEmployee();
-  } else {
-    renderHtml(employeesHTML);
-    console.log("Ok, bye!");
-  }
-})
+  inquirer.prompt(questions.another).then(runAgain => {
+    if (runAgain.addNew == "yes") {
+      addEmployee();
+    } else {
+      renderHtml(employeesHTML);
+    }
+  });
 }
 
 function renderHtml(replaced) {
   fs.readFile("./templates/main.html", "utf8", (err, data) => {
     if (err) throw err;
     let mainHtml = data.replace("{{main}}", replaced);
-    // console.log(replaced);
-
-    //fs.writeFIle
-    fs.writeFile("./output/main.html", mainHtml, function(err) {
+    fs.writeFile("./output/main.html", mainHtml, function (err) {
       if (err) throw err;
-      // console.log("Saved!");
+      console.log("Your team is ready to rock!");
     });
   });
 }
